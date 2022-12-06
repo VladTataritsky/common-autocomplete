@@ -1,0 +1,8 @@
+.app {
+  display: flex;
+  justify-content: center;
+}
+
+.autocomplete_container {
+  margin: 24px;
+}
