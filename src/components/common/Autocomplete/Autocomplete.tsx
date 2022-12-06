@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import styles from "./Autocomplete.module.css";
 
-interface AutocompleteProps<T> {
+export interface AutocompleteProps<T> {
   options: T[];
   renderOption: (option: T) => React.ReactNode;
   inputVal: (value: string) => string;
@@ -49,12 +49,15 @@ const Autocomplete = <T extends unknown>({
     inputVal(e.currentTarget.value);
   };
 
-  const handleOptionClick = useCallback((e) => {
-    setFilteredOptions([]);
-    setIsOptionsShow(false);
-    setInputValue(e.currentTarget.innerText);
-    inputVal(e.currentTarget.innerText);
-  }, [inputVal]);
+  const handleOptionClick = useCallback(
+    (e) => {
+      setFilteredOptions([]);
+      setIsOptionsShow(false);
+      setInputValue(e.currentTarget.innerText);
+      inputVal(e.currentTarget.innerText);
+    },
+    [inputVal]
+  );
 
   useEffect(() => {
     if (hasFocus && !inputValue) {
