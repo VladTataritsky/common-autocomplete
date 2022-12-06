@@ -4,25 +4,33 @@ import styles from "./Autocomplete.module.css";
 export interface AutocompleteProps<T> {
   options: T[];
   renderOption: (option: T) => React.ReactNode;
-  inputVal: (value: string) => string;
+  value?: string;
+  defaultValue?: string;
+  onChange?: (value: string) => void;
   searchKey?: string;
   inputLabel?: string;
-  filterStringBy: "start" | "end";
+  filterStringBy?: "start" | "end";
+  disabled?: boolean;
+  required?: boolean;
 }
 
 const Autocomplete = <T extends unknown>({
   options,
   renderOption,
   searchKey,
-  inputVal,
+  value = "",
+  onChange,
   inputLabel,
   filterStringBy,
+  disabled,
+  required,
+  defaultValue = "",
 }: AutocompleteProps<T>) => {
   const [filteredOptions, setFilteredOptions] = useState([]);
   const [hasFocus, setFocus] = useState(false);
   const [isOptionsShow, setIsOptionsShow] = useState(false);
   const [infoText, setInfoText] = useState("");
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(defaultValue);
 
   const filterOptions = (options, value) => {
     return options.filter((option) => {
@@ -46,17 +54,25 @@ const Autocomplete = <T extends unknown>({
     setFilteredOptions(newFilteredOptions);
     setIsOptionsShow(true);
     setInputValue(e.currentTarget.value);
-    inputVal(e.currentTarget.value);
+    onChange && onChange(e.currentTarget.value);
   };
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
+
+  useEffect(() => {
+    setInputValue(defaultValue);
+  }, [defaultValue]);
 
   const handleOptionClick = useCallback(
     (e) => {
       setFilteredOptions([]);
       setIsOptionsShow(false);
       setInputValue(e.currentTarget.innerText);
-      inputVal(e.currentTarget.innerText);
+      onChange && onChange(e.currentTarget.value);
     },
-    [inputVal]
+    [onChange]
   );
 
   useEffect(() => {
@@ -112,7 +128,10 @@ const Autocomplete = <T extends unknown>({
     <div>
       {inputLabel && (
         <div className={styles.input_label}>
-          <label>{inputLabel}</label>
+          <label>
+            {inputLabel}
+            {required && "*"}
+          </label>
         </div>
       )}
       <input
@@ -121,6 +140,8 @@ const Autocomplete = <T extends unknown>({
         onBlur={handleInputBlur}
         onChange={handleInputChange}
         value={inputValue}
+        disabled={disabled}
+        required={required}
       />
       {renderOptions}
       {infoText && <div className={styles.info_text}>{infoText}</div>}

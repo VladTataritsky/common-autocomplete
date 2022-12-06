@@ -5,11 +5,12 @@
 input {
   border: 1px solid #999;
   padding: 8px;
-  width: 300px;
+  width: 340px;
 }
 
 .input_label {
   margin: 8px 0;
+  word-wrap: break-word;
 }
 
 .options_list {
